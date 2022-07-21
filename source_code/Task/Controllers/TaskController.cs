@@ -11,25 +11,27 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace Task.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class TaskController : ControllerBase
     {
-        // GET: api/Task
-        [HttpGet]
-        public IEnumerable<string> Get()
+
+        private readonly TaskDBContext _context;
+        public TaskController(TaskDBContext context)
         {
-            return new string[] { "value1", "value2" };
+            _context = context;
         }
 
-        // GET: api/Task/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        // GET: api/Task
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
         {
-            return "value";
+            return await _context.Tasks.ToListAsync();
         }
 
         // POST: api/Task
@@ -39,19 +41,12 @@ namespace Task.Controllers
         [Consumes("application/json")]
         public async Task<ActionResult<TaskItem>> Post(TaskItem taskItem)
         {
-            string _address = "https://reqres.in/api/register";
+            _context.Tasks.Add(taskItem);
+
             string json = JsonConvert.SerializeObject(taskItem);
             Console.WriteLine("JSON");
             Console.WriteLine(json);
-            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var client = new HttpClient();
-            var response = await client.PostAsync(_address, stringContent);
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            //Console.WriteLine(responseString);
-
-            var jObject = JObject.Parse(responseString);
+            //var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
 
             var factory = new ConnectionFactory()
             {
@@ -70,7 +65,7 @@ namespace Task.Controllers
                                      arguments: null);
 
                 // string message = user.task;
-                string message = JsonConvert.SerializeObject(jObject); // this is to pass response obj
+                string message = JsonConvert.SerializeObject(taskItem); // this is to pass response obj
                 
                 var body = Encoding.UTF8.GetBytes(message);
                 Console.WriteLine(body);
@@ -81,20 +76,11 @@ namespace Task.Controllers
                                     body: body);
             }
 
-            return NoContent();
-            // return if anything
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(Post), new {id = taskItem.taskID}, taskItem);
         }
 
-        // PUT: api/Task/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/Task/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
 }

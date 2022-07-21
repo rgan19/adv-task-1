@@ -29,6 +29,17 @@
         "RABBITMQ_PORT": "31672"
 
       }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "applicationUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "environmentVariables": {
+        "RABBITMQ_HOST": "rabbitmq",
+        "RABBITMQ_PORT": "5672"
+
+      }
     }
   }
 }
