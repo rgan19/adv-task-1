@@ -31,10 +31,10 @@ Sample Response:
 
 - 4 status numbers
 
-| number | status     |   |   |   |
-|---|---------------|---|---|---|
-| 0 | "STARTED"     |   |   |   |
-| 1 | "IN_PROGRESS" |   |   |   |
-| 2 | "COMPLETED"   |   |   |   |
-| 3 | "FAILED"      |   |   |   |
+| number | status     |
+|---|---------------|
+| 0 | "STARTED"     |
+| 1 | "IN_PROGRESS" |
+| 2 | "COMPLETED"   |
+| 3 | "FAILED"      |
 
